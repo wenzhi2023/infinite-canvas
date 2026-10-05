@@ -90,6 +90,7 @@ function assertAudioConfig(config: AiConfig, model: string) {
     if (!config.baseUrl.trim()) throw new Error(apiText("baseUrlRequired"));
     if (!config.apiKey.trim()) throw new Error(apiText("apiKeyRequired"));
     if (config.apiFormat === "gemini") throw new Error(apiText("geminiAudioUnsupported"));
+    if (config.apiFormat === "minimax") throw new Error("秘塔 H3 原生协议仅支持视频生成；音频可作为视频参考素材");
 }
 
 async function assertAudioBlob(blob: Blob) {

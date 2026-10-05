@@ -746,6 +746,7 @@ export async function requestGeneration(config: AiConfig, prompt: string, option
             throw new Error(readAxiosError(error, apiText("requestFailed")));
         }
     }
+    if (requestConfig.apiFormat === "minimax") throw new Error("秘塔 H3 原生协议仅支持视频生成");
     if (requestConfig.apiFormat === "gemini") {
         try {
             return await requestGeminiImages(requestConfig, prompt, [], n, options);
@@ -808,6 +809,7 @@ export async function requestEdit(config: AiConfig, prompt: string, references: 
             throw new Error(readAxiosError(error, apiText("requestFailed")));
         }
     }
+    if (requestConfig.apiFormat === "minimax") throw new Error("秘塔 H3 原生协议仅支持视频生成");
     if (requestConfig.apiFormat === "gemini") {
         try {
             return await requestGeminiImages(requestConfig, requestPrompt, references, n, options);
@@ -870,6 +872,7 @@ export async function requestImageQuestion(config: AiConfig, messages: AiTextMes
             throw new Error(readAxiosError(error, apiText("requestFailed")));
         }
     }
+    if (requestConfig.apiFormat === "minimax") throw new Error("秘塔 H3 原生协议仅支持视频生成");
     try {
         if (requestConfig.apiFormat === "gemini") {
             const answer = (await requestGeminiStreamingResponse(requestConfig, toGeminiBody(requestConfig, messages), onDelta, options)).content || apiText("noContent");
@@ -889,6 +892,7 @@ export async function requestImageQuestion(config: AiConfig, messages: AiTextMes
 }
 
 export async function fetchImageModels(config: Pick<AiConfig, "baseUrl" | "apiKey" | "apiFormat">) {
+    if (config.apiFormat === "minimax") return ["MiniMax-H3"];
     try {
         if (config.apiFormat === "gemini") {
             const response = await axios.get<GeminiPayload>(geminiApiUrl({ ...defaultGeminiConfig, ...config }), { headers: geminiHeaders({ ...defaultGeminiConfig, ...config }) });

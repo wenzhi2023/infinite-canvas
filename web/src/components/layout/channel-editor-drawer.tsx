@@ -17,6 +17,7 @@ export function ChannelEditorDrawer({ open, channel, onSave, onClose }: { open: 
     const apiFormatOptions: Array<{ label: string; value: ApiCallFormat }> = [
         { label: "OpenAI", value: "openai" },
         { label: "Gemini", value: "gemini" },
+        { label: "秘塔 MiniMax H3", value: "minimax" },
     ];
     const capabilityOptions: Array<{ label: string; value: ModelCapability }> = ["image", "video", "text", "audio"].map((value) => ({ label: t(`config.channelEditor.capabilities.${value}`), value: value as ModelCapability }));
 
@@ -31,7 +32,7 @@ export function ChannelEditorDrawer({ open, channel, onSave, onClose }: { open: 
 
     const changeApiFormat = (apiFormat: ApiCallFormat) => {
         const baseUrl = !draft.baseUrl.trim() || draft.baseUrl.trim() === defaultBaseUrlForApiFormat(draft.apiFormat) ? defaultBaseUrlForApiFormat(apiFormat) : draft.baseUrl;
-        patch({ apiFormat, baseUrl });
+        patch({ apiFormat, baseUrl, ...(apiFormat === "minimax" && !draft.models.length ? { models: [{ name: "MiniMax-H3", capability: "video" as const }] } : {}) });
     };
 
     const applySelection = (names: string[]) => {
@@ -72,6 +73,7 @@ export function ChannelEditorDrawer({ open, channel, onSave, onClose }: { open: 
                 <label className="block">
                     <span className="mb-1 block text-sm font-medium">{t("config.channelEditor.protocol")}</span>
                     <Select className="w-full" value={draft.apiFormat} options={apiFormatOptions} onChange={changeApiFormat} />
+                    {draft.apiFormat === "minimax" ? <span className="mt-1 block text-xs">秘塔 H3 原生视频接口，无需调用脚本。API Key 保存在当前浏览器本地。</span> : null}
                 </label>
                 <label className="block md:col-span-2">
                     <span className="mb-1 block text-sm font-medium">{t("config.channelEditor.baseUrl")}</span>
